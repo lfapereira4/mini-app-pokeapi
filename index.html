@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokédex - Mini App REST</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Requisito 1: interface organizada com HTML e CSS -->
+  <header>
+    <h1>🔎 Pokédex</h1>
+    <p>Digite o nome (ou número) de um Pokémon e consulte a PokéAPI</p>
+  </header>
+
+  <main>
+    <!-- Requisito 2: campo de entrada que participa da consulta -->
+    <!-- Requisito 3: interação por meio de evento do DOM (submit do formulário) -->
+    <form id="form-busca">
+      <input
+        type="text"
+        id="input-pokemon"
+        placeholder="Ex: pikachu, 25, charizard..."
+        required
+      >
+      <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Requisito 9: feedback visual enquanto a consulta acontece -->
+    <p id="mensagem-status"></p>
+
+    <!-- Requisito 10: resultado aparece na própria página (não só no console) -->
+    <section id="resultado" class="escondido">
+      <img id="pokemon-imagem" src="" alt="Imagem do Pokémon">
+      <h2 id="pokemon-nome"></h2>
+
+      <ul class="info">
+        <li><strong>Número:</strong> <span id="pokemon-numero"></span></li>
+        <li><strong>Tipo(s):</strong> <span id="pokemon-tipos"></span></li>
+        <li><strong>Peso:</strong> <span id="pokemon-peso"></span></li>
+        <li><strong>Altura:</strong> <span id="pokemon-altura"></span></li>
+        <li><strong>Habilidades:</strong> <span id="pokemon-habilidades"></span></li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- O script fica no fim do body para garantir que o HTML já existe
+       quando o JavaScript tenta selecionar os elementos -->
+  <script src="script.js"></script>
+</body>
+</html>

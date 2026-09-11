@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0 1rem 3rem;
+  color: #222;
+}
+
+header {
+  text-align: center;
+  padding: 2rem 0 1rem;
+}
+
+header h1 {
+  margin-bottom: 0.3rem;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#input-pokemon {
+  flex: 1;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #c72c39;
+}
+
+#mensagem-status {
+  text-align: center;
+  font-style: italic;
+  min-height: 1.5rem;
+  color: #555;
+}
+
+#resultado {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Classe usada para esconder o card de resultado até que haja dados
+   (ou uma mensagem de erro) para mostrar */
+.escondido {
+  display: none;
+}
+
+#pokemon-imagem {
+  width: 150px;
+  height: 150px;
+}
+
+.info {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  margin-top: 1rem;
+}
+
+.info li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.erro {
+  color: #c0392b;
+  font-weight: bold;
+}
