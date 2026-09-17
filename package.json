@@ -1,0 +1,12 @@
+{
+  "name": "mini-app-backend",
+  "version": "1.0.0",
+  "description": "Backend Node.js/Express que serve o front-end e faz de ponte para a Rick and Morty API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --use-system-ca server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

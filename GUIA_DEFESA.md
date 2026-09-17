@@ -1,54 +1,54 @@
 # Guia de estudo para a defesa (17/09)
 
-O documento da atividade diz que você precisa **explicar**, não só apresentar funcionando. Abaixo estão as perguntas que a professora provavelmente vai fazer (seção 8 da avaliação) já respondidas com base neste código. Estude isto até conseguir responder sem olhar.
+Versão atualizada: o projeto agora tem um BACKEND (Node.js/Express) além do front-end. Isso muda algumas respostas — estude esta versão, não a antiga.
+
+## A arquitetura em uma frase
+
+O navegador chama o NOSSO servidor (`/api/personagem/:termo`), e é o SERVIDOR quem chama a Rick and Morty API. Existem DOIS fetch()/async/await na aplicação: um no front-end (`public/script.js`) e outro no backend (`server.js`).
 
 ### 1. Qual evento inicia a consulta?
-O evento `submit` do formulário (`<form id="form-busca">`), capturado em:
+O evento `submit` do formulário, em `public/script.js`:
 ```js
 form.addEventListener("submit", function (event) { ... });
 ```
-Ele dispara quando o usuário clica no botão "Buscar" ou aperta Enter dentro do campo de texto.
 
 ### 2. Onde ocorre a chamada fetch()?
-Dentro da função `buscarPokemon(nome)`, na linha:
-```js
-const resposta = await fetch(`https://pokeapi.co/api/v2/pokemon/${nome}`);
-```
+Em DOIS lugares, e é importante saber diferenciar:
+- No front-end (`public/script.js`), dentro de `buscarPersonagem()`: `fetch(`/api/personagem/${termo}`)` — chama o NOSSO backend.
+- No backend (`server.js`), dentro da rota `/api/personagem/:termo`: `fetch(url)` — chama a Rick and Morty API de verdade.
 
 ### 3. O que representa a variável que recebe a resposta da requisição?
-A variável `resposta` é um objeto do tipo `Response`. Ela **não é** ainda os dados do Pokémon — é um envelope que contém informações sobre a requisição HTTP: o status (200, 404...), os cabeçalhos, e um método `.json()` que permite ler o corpo da resposta.
+Nos dois lugares se chama `resposta` e é um objeto `Response`: contém o status HTTP e um método `.json()` para ler o corpo. No front-end, é a resposta do NOSSO backend. No backend, é a resposta da Rick and Morty API.
 
 ### 4. O que `resposta.json()` faz?
-Lê o corpo da resposta (que vem como texto no formato JSON) e converte esse texto em um objeto/array JavaScript de verdade, que dá para acessar com `dados.name`, `dados.types` etc. Esse processo também é assíncrono — por isso usamos `await` nele também.
+Converte o corpo da resposta (texto em formato JSON) em um objeto/array JavaScript de verdade. Acontece duas vezes: o backend faz isso com a resposta da Rick and Morty API, e o front-end faz isso de novo com a resposta do backend (que já vem filtrada/mais simples).
 
 ### 5. Por que a função é `async`?
-Porque dentro dela usamos a palavra `await` duas vezes (no `fetch` e no `.json()`), e `await` só pode ser usado dentro de uma função declarada com `async`. Isso permite escrever código que depende de operações demoradas (rede) de forma sequencial e legível, em vez de encadear vários `.then()`.
+Tanto `buscarPersonagem()` (front-end) quanto a função da rota `/api/personagem/:termo` (backend) usam `await` dentro delas, e `await` só funciona dentro de uma função `async`.
 
 ### 6. O que o `await` está aguardando?
-- No `await fetch(...)`: está aguardando o servidor da PokéAPI responder à requisição HTTP (isso pode levar de alguns milissegundos a alguns segundos).
-- No `await resposta.json()`: está aguardando o corpo da resposta ser completamente lido e convertido de texto para objeto JavaScript.
+- No front-end: aguarda o NOSSO servidor Express responder.
+- No backend: aguarda a Rick and Morty API responder.
+- Em ambos, `await resposta.json()` aguarda o corpo ser lido e convertido.
 
 ### 7. Onde os dados JSON são utilizados?
-Na função `exibirResultado(dados)`, onde os campos `dados.name`, `dados.id`, `dados.types`, `dados.weight`, `dados.height` e `dados.abilities` são lidos e usados para preencher o HTML.
+No backend, os campos `personagem.id`, `.name`, `.image`, `.species`, `.status`, `.gender`, `.origin` são lidos da resposta da API e reempacotados num JSON mais simples. No front-end, `exibirResultado(dados)` lê esses mesmos campos (já vindos do backend) para preencher o HTML.
 
 ### 8. Onde ocorre a manipulação do DOM?
-Em vários pontos:
-- No início do arquivo, ao selecionar elementos com `document.getElementById(...)`.
-- Em `exibirResultado()`, ao alterar `.textContent` e `.src` dos elementos para mostrar os dados.
-- Em `mostrarCarregando()` e `exibirErro()`, ao alterar o texto de status e ao adicionar/remover a classe `escondido` com `classList`.
+Só no front-end (`public/script.js`) — o backend nunca toca no DOM, ele só processa dados e devolve JSON. No front-end: seleção de elementos com `getElementById`, e alteração de `.textContent`/`.src`/`classList` em `exibirResultado()`, `mostrarCarregando()` e `exibirErro()`.
 
 ### 9. Como a aplicação informa que está aguardando a API?
-A função `mostrarCarregando()` é chamada logo no início de `buscarPokemon()`, antes do `fetch`, e escreve "Buscando..." no elemento `#mensagem-status`. Essa mensagem some assim que o resultado (ou o erro) é exibido.
+A função `mostrarCarregando()` no front-end escreve "Buscando..." antes do fetch para o backend. Do ponto de vista do usuário, essa espera cobre as DUAS chamadas em sequência (front→backend e backend→API), mas ele só vê uma mensagem.
 
 ### 10. Como a aplicação trata uma situação de erro?
-Duas camadas:
-1. Se a API responder mas o Pokémon não existir, `resposta.ok` será `false` (status 404), e o código lança um erro manualmente com `throw new Error(...)`.
-2. Todo o processo está dentro de um bloco `try/catch`: qualquer erro (o que foi lançado manualmente, ou um erro de rede real, como falta de internet) é capturado no `catch` e exibido para o usuário pela função `exibirErro()`, sem quebrar a aplicação.
+Em camadas:
+1. **No backend**: se a Rick and Morty API não encontrar o personagem (por ID ou nome), a rota responde com status 404 e um JSON `{ erro: "..." }`. Erros de rede do próprio servidor caem num `catch` e retornam status 500.
+2. **No front-end**: verifica `resposta.ok`; se for falso, lê o corpo de erro do backend e lança um `Error` com essa mensagem, que é capturado pelo `catch` e mostrado ao usuário via `exibirErro()`.
 
 ---
 
-## Dica extra para a apresentação
+## Pergunta extra que pode vir: "por que criar um backend, se dava pra fazer só com front-end?"
+Resposta honesta: o front-end sozinho já atendia todos os requisitos. O backend foi acrescentado para demonstrar o uso de rotas próprias em Node.js/Express (permitido pelo escopo do projeto) e, na prática, resolveu um bloqueio de firewall que a chamada direta do navegador enfrentava nessa rede.
 
-Se a professora perguntar "o que acontece se eu tirar o `await` na frente do `fetch`?" — a resposta é: `resposta` deixaria de ser o objeto de resposta e passaria a ser uma `Promise` (uma "promessa" de valor futuro), e tentar usar `resposta.ok` ou `resposta.json()` diretamente causaria erro, porque a requisição ainda não teria terminado.
-
-Se perguntar "por que dividir peso e altura por 10?" — porque a PokéAPI retorna esses valores em hectogramas e decímetros, então dividir por 10 converte para quilogramas e metros.
+## Pergunta extra: "por que buscar por ID é diferente de buscar por nome?"
+A Rick and Morty API tem dois formatos: `/character/{id}` devolve UM personagem direto; `/character/?name=texto` devolve uma LISTA (`results: [...]`), porque pode haver mais de um personagem com nomes parecidos. Por isso o backend verifica se o termo digitado é só números (`/^\d+$/.test(termo)`) para decidir qual formato usar, e no caso de busca por nome pega `results[0]` (o primeiro da lista).

@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pokédex - Mini App REST</title>
+  <title>Buscador de Personagens - Rick and Morty</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- Requisito 1: interface organizada com HTML e CSS -->
   <header>
-    <h1>🔎 Pokédex</h1>
-    <p>Digite o nome (ou número) de um Pokémon e consulte a PokéAPI</p>
+    <h1>🛸 Rick and Morty</h1>
+    <p>Digite o nome (ou número) de um personagem e consulte a API</p>
   </header>
 
   <main>
@@ -20,8 +20,8 @@
     <form id="form-busca">
       <input
         type="text"
-        id="input-pokemon"
-        placeholder="Ex: pikachu, 25, charizard..."
+        id="input-personagem"
+        placeholder="Ex: rick, morty, 1..."
         required
       >
       <button type="submit">Buscar</button>
@@ -32,15 +32,15 @@
 
     <!-- Requisito 10: resultado aparece na própria página (não só no console) -->
     <section id="resultado" class="escondido">
-      <img id="pokemon-imagem" src="" alt="Imagem do Pokémon">
-      <h2 id="pokemon-nome"></h2>
+      <img id="personagem-imagem" src="" alt="Imagem do personagem">
+      <h2 id="personagem-nome"></h2>
 
       <ul class="info">
-        <li><strong>Número:</strong> <span id="pokemon-numero"></span></li>
-        <li><strong>Tipo(s):</strong> <span id="pokemon-tipos"></span></li>
-        <li><strong>Peso:</strong> <span id="pokemon-peso"></span></li>
-        <li><strong>Altura:</strong> <span id="pokemon-altura"></span></li>
-        <li><strong>Habilidades:</strong> <span id="pokemon-habilidades"></span></li>
+        <li><strong>Número:</strong> <span id="personagem-numero"></span></li>
+        <li><strong>Espécie:</strong> <span id="personagem-especie"></span></li>
+        <li><strong>Status:</strong> <span id="personagem-status"></span></li>
+        <li><strong>Gênero:</strong> <span id="personagem-genero"></span></li>
+        <li><strong>Origem:</strong> <span id="personagem-origem"></span></li>
       </ul>
     </section>
   </main>

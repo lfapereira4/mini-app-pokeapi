@@ -1,53 +1,70 @@
-# Pokédex - Mini App consumindo a PokéAPI
+# Buscador de Personagens - Rick and Morty API
 
 Projeto da disciplina **Tecnologias para Internet** (Faculdade Senac Cascavel) — Avaliação Prática "Mini App: Consumindo uma API REST".
 
 ## O que a aplicação faz
 
-O usuário digita o nome (ou número) de um Pokémon em um campo de texto e clica em "Buscar" (ou pressiona Enter). A aplicação consulta a [PokéAPI](https://pokeapi.co/) e exibe dinamicamente na página: imagem, número na Pokédex, tipo(s), peso, altura e habilidades do Pokémon.
+O usuário digita o nome (ou número) de um personagem de Rick and Morty e clica em "Buscar" (ou pressiona Enter). O front-end chama um backend próprio em Node.js/Express, que consulta a [Rick and Morty API](https://rickandmortyapi.com/) e devolve os dados prontos para exibição: imagem, número, espécie, status, gênero e origem.
+
+## Arquitetura (front-end + backend)
+
+```
+Navegador (front-end)  --fetch()-->  Servidor Express (backend)  --fetch()-->  Rick and Morty API
+     script.js                          server.js
+```
+
+O front-end NÃO fala mais diretamente com a API pública. Ele chama uma rota própria do nosso servidor (`/api/personagem/:termo`), e é o servidor quem consulta a Rick and Morty API e devolve o resultado já filtrado em JSON.
 
 ## Tecnologias utilizadas
 
 - HTML5 e CSS3 para a interface
-- JavaScript (ES6+) puro, sem frameworks
-- [Fetch API](https://developer.mozilla.org/pt-BR/docs/Web/API/Fetch_API) para a requisição HTTP
-- `async/await` para lidar com a resposta assíncrona
-- Manipulação do DOM para atualizar a página sem recarregá-la
+- JavaScript (ES6+) no front-end: DOM, eventos, fetch, async/await
+- Node.js + Express no backend: rota própria que consome a API pública
+- `async/await` tanto no front-end quanto no backend
+- Tratamento de erros em ambas as camadas
 
 ## Como executar
 
-1. Baixe (ou clone) este repositório.
-2. Abra o arquivo `index.html` diretamente no navegador (duplo clique, ou clique com o botão direito → "Abrir com" → navegador).
-3. Não é necessário servidor nem instalação de dependências — é um projeto 100% front-end.
+1. Tenha o [Node.js](https://nodejs.org/) instalado.
+2. Na pasta do projeto, instale as dependências: `npm install`
+3. Inicie o servidor: `npm start`
+4. Abra `http://localhost:3000` no navegador.
+
+Obs: se sua rede tiver um firewall/proxy corporativo com inspeção SSL (ex: FortiGate), pode ser necessário rodar com `node --use-system-ca server.js` (já configurado no script `start`) para que o Node confie no certificado da rede.
 
 ## Estrutura dos arquivos
 
 ```
 mini-app-pokeapi/
-├── index.html   → estrutura da página (formulário + área de resultado)
-├── style.css    → estilização visual
-├── script.js    → lógica: eventos, fetch, tratamento de dados e erros
-└── README.md    → este arquivo
+├── server.js         → backend Express: serve o front-end e consulta a API pública
+├── package.json       → dependências e script de inicialização
+├── public/
+│   ├── index.html      → estrutura da página
+│   ├── style.css        → estilização visual
+│   └── script.js         → lógica do front-end: eventos, fetch para o backend, DOM
+├── README.md
+└── GUIA_DEFESA.md      → respostas para a apresentação/defesa
 ```
 
 ## Como os requisitos da atividade foram atendidos
 
 | Requisito | Onde está no código |
 |---|---|
-| Interface organizada com HTML/CSS | `index.html` + `style.css` |
-| Campo de entrada que participa da consulta | `<input id="input-pokemon">` em `index.html` |
-| Interação por evento do DOM | `form.addEventListener("submit", ...)` em `script.js` |
-| Consulta a API REST com `fetch()` | dentro de `buscarPokemon()`, em `script.js` |
-| Função com `async/await` | `async function buscarPokemon(nome)` |
-| Conversão/uso de dados JSON | `const dados = await resposta.json();` e uso de `dados.name`, `dados.types` etc. |
-| Pelo menos 3 informações dinâmicas na página | nome, número, tipo(s), peso, altura e habilidades — em `exibirResultado()` |
-| Tratamento de erro / resultado inexistente | bloco `try/catch` + verificação de `resposta.ok` em `buscarPokemon()` |
+| Interface organizada com HTML/CSS | `public/index.html` + `public/style.css` |
+| Campo de entrada que participa da consulta | `<input id="input-personagem">` |
+| Interação por evento do DOM | `form.addEventListener("submit", ...)` em `public/script.js` |
+| Consulta a API REST com `fetch()` | front-end chama o backend; backend chama a Rick and Morty API (ambos com `fetch()`) |
+| Função com `async/await` | `buscarPersonagem()` no front-end e a rota `/api/personagem/:termo` no backend |
+| Conversão/uso de dados JSON | `resposta.json()` nas duas camadas |
+| Pelo menos 3 informações dinâmicas na página | nome, número, espécie, status, gênero e origem |
+| Tratamento de erro / resultado inexistente | `try/catch` + status 404/500 no backend, e verificação de `resposta.ok` no front-end |
 | Feedback de carregamento ("Buscando...") | função `mostrarCarregando()` |
-| Resultado exibido na própria página (não só no console) | funções `exibirResultado()` e `exibirErro()` alteram o DOM diretamente |
+| Resultado exibido na própria página | funções `exibirResultado()` e `exibirErro()` |
+| Rotas próprias em Node.js (escopo do projeto) | rota `GET /api/personagem/:termo` em `server.js` |
 
 ## API utilizada
 
-- **PokéAPI** — `https://pokeapi.co/api/v2/pokemon/{nome-ou-numero}`
+- **Rick and Morty API** — `https://rickandmortyapi.com/api/character`
 - Não requer chave de API (uso público e gratuito).
 
 ## Autor
