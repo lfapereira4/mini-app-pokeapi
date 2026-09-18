@@ -1,3 +1,6 @@
+/* Reset básico: box-sizing: border-box faz com que padding e border
+   sejam CONTADOS dentro da largura/altura definida (em vez de
+   somados a ela) — evita cálculos manuais de tamanho */
 * {
   box-sizing: border-box;
 }
@@ -5,27 +8,39 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: #f0f2f5;
-  /* Fundo decorativo com pokébolas repetidas (desenhado em SVG, sem
-     precisar baixar nenhuma imagem) */
+  /* Fundo decorativo com pokébolas repetidas. É um SVG (imagem
+     vetorial) desenhado direto aqui no CSS, em formato "data URI"
+     (codificado na própria linha) — não baixa nenhum arquivo externo,
+     é puro CSS/SVG. */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Ccircle cx='35' cy='35' r='24' fill='none' stroke='%23d5d9e0' stroke-width='3'/%3E%3Cpath d='M11,35 a24,24 0 0,1 48,0' fill='%23e4e8ef' stroke='%23d5d9e0' stroke-width='3'/%3E%3Cline x1='11' y1='35' x2='59' y2='35' stroke='%23d5d9e0' stroke-width='3'/%3E%3Ccircle cx='35' cy='35' r='7' fill='%23f0f2f5' stroke='%23d5d9e0' stroke-width='3'/%3E%3C/svg%3E");
+  /* Repete a imagem de fundo em mosaico, como um padrão */
   background-repeat: repeat;
+  /* Tamanho de cada "azulejo" do padrão */
   background-size: 70px 70px;
   margin: 0;
   padding: 0 1rem 3rem;
   color: #222;
 }
 
+/* Cabeçalho no estilo "Pokédex": faixa vermelha no topo da página */
 header {
   text-align: center;
   padding: 1.5rem 0 1rem;
+  /* Gradiente de vermelho escuro pra mais escuro ainda, de cima
+     pra baixo (efeito de profundidade) */
   background: linear-gradient(#dc0a2d, #b8081f);
   color: #fff;
+  /* Arredonda só os cantos de baixo, criando a "moldura" da Pokédex */
   border-radius: 0 0 24px 24px;
+  /* Margem negativa nas laterais: estica o header além do padding
+     do body, encostando nas bordas da tela */
   margin: 0 -1rem 1.5rem;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }
 
-/* "Lente" decorativa, lembrando o topo de uma Pokédex clássica */
+/* ::before cria um elemento "virtual" antes do conteúdo do header —
+   usado aqui só pra desenhar a "lente" redonda e azul, sem precisar
+   de uma tag HTML extra no index.html */
 header::before {
   content: "";
   display: block;
@@ -33,6 +48,7 @@ header::before {
   height: 34px;
   margin: 0 auto 0.6rem;
   border-radius: 50%;
+  /* Gradiente radial simula o brilho/reflexo de uma lente de vidro */
   background: radial-gradient(circle at 35% 30%, #bfefff, #4fc3f7 60%, #0288d1);
   border: 4px solid #fff;
   box-shadow: 0 0 0 2px #333;
@@ -47,17 +63,21 @@ header p {
   opacity: 0.9;
 }
 
+/* Limita a largura do conteúdo principal e centraliza na tela */
 main {
   max-width: 480px;
   margin: 0 auto;
 }
 
+/* Coloca o input e o botão lado a lado, com um pequeno espaço entre eles */
 form {
   display: flex;
   gap: 0.5rem;
 }
 
 #input-personagem {
+  /* flex: 1 faz o input ocupar todo o espaço restante da linha,
+     empurrando o botão pra direita */
   flex: 1;
   padding: 0.6rem;
   font-size: 1rem;
@@ -76,6 +96,7 @@ button {
   font-weight: bold;
 }
 
+/* Muda a cor do botão quando o mouse passa por cima (feedback visual) */
 button:hover {
   background-color: #b8081f;
 }
@@ -83,10 +104,13 @@ button:hover {
 #mensagem-status {
   text-align: center;
   font-style: italic;
+  /* Reserva uma altura mínima mesmo quando está vazio, pra o layout
+     não "pular" quando o texto aparece/some */
   min-height: 1.5rem;
   color: #555;
 }
 
+/* Card branco onde aparece o resultado da busca */
 #resultado {
   background: white;
   border-radius: 14px;
@@ -96,10 +120,14 @@ button:hover {
   border: 3px solid #dc0a2d;
 }
 
+/* Classe usada pelo JavaScript pra esconder elementos (display:none
+   remove completamente da tela, sem deixar espaço vazio) — usada no
+   card de resultado, no botão de som, e nas mensagens */
 .escondido {
   display: none;
 }
 
+/* Imagem do personagem/Pokémon, dentro de um círculo (a "tela" da Pokédex) */
 #personagem-imagem {
   width: 150px;
   height: 150px;
@@ -107,7 +135,12 @@ button:hover {
   background: #ffe082;
   border: 3px solid #333;
   padding: 4px;
+  /* object-fit: contain evita que a imagem seja esticada/distorcida
+     caso ela não seja perfeitamente quadrada — encaixa mantendo a
+     proporção original */
   object-fit: contain;
+  /* image-rendering: pixelated mantém os sprites animados (pixel art)
+     nítidos ao serem ampliados, em vez de ficarem borrados */
   image-rendering: pixelated;
 }
 
@@ -123,6 +156,8 @@ button:hover {
   border-bottom: 1px solid #eee;
 }
 
+/* Classe aplicada à mensagem de status quando é um ERRO (texto
+   vermelho e em negrito, pra chamar atenção) */
 .erro {
   color: #c0392b;
   font-weight: bold;

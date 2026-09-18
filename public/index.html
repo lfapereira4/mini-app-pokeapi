@@ -1,9 +1,20 @@
+<!--
+  Documento HTML5. "<!DOCTYPE html>" diz ao navegador pra renderizar
+  no modo padrão (HTML5), evitando comportamentos antigos/estranhos.
+-->
 <!DOCTYPE html>
+<!-- lang="pt-br" ajuda leitores de tela e o navegador a saber que o
+     conteúdo está em português -->
 <html lang="pt-br">
 <head>
+  <!-- UTF-8 garante que acentos e caracteres especiais (ó, ê, ã...)
+       apareçam corretamente -->
   <meta charset="UTF-8">
+  <!-- Faz a página se adaptar bem a telas de celular (responsividade) -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Texto que aparece na aba do navegador -->
   <title>Pokédex</title>
+  <!-- Importa o arquivo de estilos (CSS) que fica na mesma pasta -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,6 +30,10 @@
   <main>
     <!-- Requisito 2: campo de entrada que participa da consulta -->
     <!-- Requisito 3: interação por meio de evento do DOM (submit do formulário) -->
+    <!-- O <form> agrupa o input e o botão. Quando o usuário aperta
+         Enter ou clica em "Buscar", o navegador dispara o evento
+         "submit" nesse formulário — é esse evento que o script.js
+         escuta com addEventListener("submit", ...). -->
     <form id="form-busca">
       <input
         type="text"
@@ -26,20 +41,32 @@
         placeholder="Ex: rick, morty, 1..."
         required
       >
+      <!-- type="submit": ao clicar, dispara o evento "submit" do
+           <form> pai automaticamente (não precisa de onclick) -->
       <button type="submit">Buscar</button>
     </form>
 
     <!-- Requisito 9: feedback visual enquanto a consulta acontece -->
+    <!-- Começa vazio; o script.js escreve "Buscando..." ou uma
+         mensagem de erro aqui, usando .textContent -->
     <p id="mensagem-status"></p>
 
     <!-- Requisito 10: resultado aparece na própria página (não só no console) -->
+    <!-- class="escondido" (display:none no CSS) esconde este bloco
+         até que uma busca dê certo. O script.js remove essa classe
+         quando tem dados pra mostrar. -->
     <section id="resultado" class="escondido">
+      <!-- src="" fica vazio até o script.js preencher com a imagem
+           certa (foto real do personagem ou sprite de Pokémon) -->
       <img id="personagem-imagem" src="" alt="Imagem do personagem">
       <h2 id="personagem-nome"></h2>
 
-      <!-- Extra decorativo: só aparece pros IDs 1-10 (som de Pokémon) -->
+      <!-- Extra decorativo: só aparece (perde a classe "escondido")
+           quando o personagem tem uma versão Pokémon associada -->
       <button type="button" id="botao-som" class="escondido">🔊 Ouvir</button>
 
+      <!-- Cada <span> é um "buraco" que o JavaScript preenche depois
+           com .textContent. Os <strong> são só os rótulos fixos. -->
       <ul class="info">
         <li><strong>Número:</strong> <span id="personagem-numero"></span></li>
         <li><strong>Espécie:</strong> <span id="personagem-especie"></span></li>
@@ -50,8 +77,10 @@
     </section>
   </main>
 
-  <!-- O script fica no fim do body para garantir que o HTML já existe
-       quando o JavaScript tenta selecionar os elementos -->
+  <!-- O script fica no fim do body (e não no <head>) para garantir
+       que todo o HTML acima já existe no DOM quando o JavaScript
+       tenta selecionar os elementos com getElementById — se o script
+       rodasse antes, esses elementos ainda não existiriam. -->
   <script src="script.js"></script>
 </body>
 </html>
