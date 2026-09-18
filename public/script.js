@@ -6,6 +6,7 @@ const form = document.getElementById("form-busca");
 const input = document.getElementById("input-personagem");
 const mensagemStatus = document.getElementById("mensagem-status");
 const resultado = document.getElementById("resultado");
+const botaoSom = document.getElementById("botao-som");
 
 const personagemImagem = document.getElementById("personagem-imagem");
 const personagemNome = document.getElementById("personagem-nome");
@@ -14,6 +15,13 @@ const personagemEspecie = document.getElementById("personagem-especie");
 const personagemStatus = document.getElementById("personagem-status");
 const personagemGenero = document.getElementById("personagem-genero");
 const personagemOrigem = document.getElementById("personagem-origem");
+
+// Extra decorativo: quando o ID do personagem coincide com um destes,
+// mostramos a foto/som de um Pokémon no lugar (1 a 10, mais 10 lendários)
+const IDS_COM_POKEMON = new Set([
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+  144, 145, 146, 150, 151, 249, 250, 384, 483, 484,
+]);
 
 /* ============================================================
    2. TRATAMENTO DE EVENTO (Requisito 3)
@@ -36,6 +44,14 @@ form.addEventListener("submit", function (event) {
   }
 
   buscarPersonagem(termoDigitado.toLowerCase());
+});
+
+// Extra decorativo: clique no botão "Ouvir" toca o som salvo localmente
+botaoSom.addEventListener("click", function () {
+  const id = botaoSom.dataset.id;
+  if (id) {
+    new Audio(`audio/pokemon/${id}.ogg`).play();
+  }
 });
 
 /* ============================================================
@@ -66,19 +82,30 @@ async function buscarPersonagem(termo) {
 /* ============================================================
    4. MANIPULAÇÃO DO DOM — mostrar o resultado (Requisitos 7, 10)
    ------------------------------------------------------------
-   EXTRA (decorativo, não é requisito da atividade): para os
-   personagens de ID 1 a 10, trocamos a imagem pela foto de um
-   Pokémon correspondente, salva localmente em "public/img/pokemon".
-   Isso é só visual — os dados (nome, espécie, status...) continuam
-   sendo os do personagem real, vindos da Rick and Morty API.
+   EXTRA (decorativo, não é requisito da atividade): quando
+   dados.id está em IDS_COM_POKEMON, trocamos a imagem por uma
+   foto de Pokémon e mostramos um botão pra tocar o som/grito
+   dele — arquivos salvos localmente em "public/img/pokemon" e
+   "public/audio/pokemon". Os dados (nome, espécie, status...)
+   continuam sendo os do personagem real, vindos da Rick and
+   Morty API.
    ============================================================ */
 
 function exibirResultado(dados) {
-  const temFotoPokemon = dados.id >= 1 && dados.id <= 10;
-  personagemImagem.src = temFotoPokemon
+  const temExtraPokemon = IDS_COM_POKEMON.has(dados.id);
+
+  personagemImagem.src = temExtraPokemon
     ? `img/pokemon/${dados.id}.png`
     : dados.image;
   personagemImagem.alt = dados.name;
+
+  if (temExtraPokemon) {
+    botaoSom.classList.remove("escondido");
+    botaoSom.dataset.id = dados.id;
+  } else {
+    botaoSom.classList.add("escondido");
+    delete botaoSom.dataset.id;
+  }
 
   personagemNome.textContent = dados.name;
   personagemNumero.textContent = `#${dados.id}`;
