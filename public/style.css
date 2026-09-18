@@ -107,6 +107,8 @@ button:hover {
   background: #ffe082;
   border: 3px solid #333;
   padding: 4px;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 .info {

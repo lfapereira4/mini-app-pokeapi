@@ -83,19 +83,19 @@ async function buscarPersonagem(termo) {
    4. MANIPULAÇÃO DO DOM — mostrar o resultado (Requisitos 7, 10)
    ------------------------------------------------------------
    EXTRA (decorativo, não é requisito da atividade): quando
-   dados.id está em IDS_COM_POKEMON, trocamos a imagem por uma
-   foto de Pokémon e mostramos um botão pra tocar o som/grito
-   dele — arquivos salvos localmente em "public/img/pokemon" e
-   "public/audio/pokemon". Os dados (nome, espécie, status...)
-   continuam sendo os do personagem real, vindos da Rick and
-   Morty API.
+   dados.id está em IDS_COM_POKEMON, trocamos a imagem por um
+   sprite ANIMADO (gif) de Pokémon e mostramos um botão pra tocar
+   o som/grito dele — arquivos salvos localmente em
+   "public/img/pokemon-animado" e "public/audio/pokemon". Os
+   dados (nome, espécie, status...) continuam sendo os do
+   personagem real, vindos da Rick and Morty API.
    ============================================================ */
 
 function exibirResultado(dados) {
   const temExtraPokemon = IDS_COM_POKEMON.has(dados.id);
 
   personagemImagem.src = temExtraPokemon
-    ? `img/pokemon/${dados.id}.png`
+    ? `img/pokemon-animado/${dados.id}.gif`
     : dados.image;
   personagemImagem.alt = dados.name;
 
