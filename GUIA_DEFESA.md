@@ -52,3 +52,11 @@ Resposta honesta: o front-end sozinho já atendia todos os requisitos. O backend
 
 ## Pergunta extra: "por que buscar por ID é diferente de buscar por nome?"
 A Rick and Morty API tem dois formatos: `/character/{id}` devolve UM personagem direto; `/character/?name=texto` devolve uma LISTA (`results: [...]`), porque pode haver mais de um personagem com nomes parecidos. Por isso o backend verifica se o termo digitado é só números (`/^\d+$/.test(termo)`) para decidir qual formato usar, e no caso de busca por nome pega `results[0]` (o primeiro da lista).
+
+
+## Pergunta extra: "o que acontece se eu digitar algo inválido, tipo símbolos?"
+Antes de chamar o backend, o front-end confere o texto digitado com uma expressão regular (`/^[\p{L}0-9\s]+$/u`) que só aceita letras, números e espaços. Se o texto tiver símbolos (`/`, `?`, `<`, etc.), a busca nem chega a ser feita — aparece direto a mensagem "Digite apenas letras e números...". Além disso, o texto digitado passa por `encodeURIComponent()` antes de entrar na URL da requisição, pra garantir que espaços e acentos não quebrem o endereço.
+
+
+## Pergunta extra: "por que aparece foto de Pokémon em alguns personagens?"
+É um detalhe decorativo, sem relação com os requisitos da atividade: para os IDs de 1 a 10, a função `exibirResultado()` troca a imagem exibida por uma foto de Pokémon salva localmente em `public/img/pokemon/` (baixada uma vez do repositório oficial da PokéAPI no GitHub). Os DADOS continuam sendo do personagem de verdade (nome, espécie, status, gênero, origem) — só a imagem muda, e só para fins visuais. A lógica de consumo da API (fetch, async/await, tratamento de erro) não foi alterada por causa disso.

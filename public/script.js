@@ -19,31 +19,35 @@ const personagemOrigem = document.getElementById("personagem-origem");
    2. TRATAMENTO DE EVENTO (Requisito 3)
    ============================================================ */
 
+const PADRAO_VALIDO = /^[\p{L}0-9\s]+$/u;
+
 form.addEventListener("submit", function (event) {
   event.preventDefault();
 
-  const termoDigitado = input.value.trim().toLowerCase();
+  const termoDigitado = input.value.trim();
 
   if (termoDigitado === "") {
     return;
   }
 
-  buscarPersonagem(termoDigitado);
+  if (!PADRAO_VALIDO.test(termoDigitado)) {
+    exibirErro("Digite apenas letras e números (sem símbolos ou espaços especiais).");
+    return;
+  }
+
+  buscarPersonagem(termoDigitado.toLowerCase());
 });
 
 /* ============================================================
    3. FUNÇÃO ASSÍNCRONA QUE CONSOME A NOSSA API (Requisitos 4, 5, 6, 8, 9)
-   ------------------------------------------------------------
-   O front-end chama a rota própria do backend (/api/personagem/:termo).
-   É o servidor Node.js/Express quem conversa com a Rick and Morty API
-   por trás dos panos (veja server.js).
    ============================================================ */
 
 async function buscarPersonagem(termo) {
   mostrarCarregando();
 
   try {
-    const resposta = await fetch(`/api/personagem/${termo}`);
+    const termoCodificado = encodeURIComponent(termo);
+    const resposta = await fetch(`/api/personagem/${termoCodificado}`);
 
     if (!resposta.ok) {
       const corpoErro = await resposta.json().catch(() => ({}));
@@ -61,10 +65,19 @@ async function buscarPersonagem(termo) {
 
 /* ============================================================
    4. MANIPULAÇÃO DO DOM — mostrar o resultado (Requisitos 7, 10)
+   ------------------------------------------------------------
+   EXTRA (decorativo, não é requisito da atividade): para os
+   personagens de ID 1 a 10, trocamos a imagem pela foto de um
+   Pokémon correspondente, salva localmente em "public/img/pokemon".
+   Isso é só visual — os dados (nome, espécie, status...) continuam
+   sendo os do personagem real, vindos da Rick and Morty API.
    ============================================================ */
 
 function exibirResultado(dados) {
-  personagemImagem.src = dados.image;
+  const temFotoPokemon = dados.id >= 1 && dados.id <= 10;
+  personagemImagem.src = temFotoPokemon
+    ? `img/pokemon/${dados.id}.png`
+    : dados.image;
   personagemImagem.alt = dados.name;
 
   personagemNome.textContent = dados.name;
